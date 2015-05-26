@@ -39,8 +39,17 @@ namespace s2industries.IFTSTA
             }
 
             StreamReader streamReader = new StreamReader(path);
-            string data = streamReader.ReadToEnd().Replace("\r", "").Replace("\n", "");
+            string data = streamReader.ReadToEnd();
             streamReader.Close();
+
+            return LoadFromString(data);
+        } // !Load()
+
+
+        public static List<IFTSTAConsigment> LoadFromString(string data)
+        {
+            // clean data
+            data = data.Replace("\r", "").Replace("\n", "");
 
             // remove header
             if (data.IndexOf(HEADER) > -1)
@@ -128,7 +137,7 @@ namespace s2industries.IFTSTA
             } // !foreach(transportStatusSegments)
 
             return retval;
-        } // !Load()
+        } // !LoadFromString()
 
 
         private static List<EDISegment> _SplitIntoSegments(string rawData)

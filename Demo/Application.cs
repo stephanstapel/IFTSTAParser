@@ -29,6 +29,9 @@ namespace s2industries.IFTSTA.Demo
         {
             string path = @"..\..\..\sample.txt";
             List<IFTSTAConsigment> consigments = IFTSTAParser.Load(path);
+
+            string data = System.IO.File.ReadAllText(path);
+            List<IFTSTAConsigment> consigments2 = IFTSTAParser.LoadFromString(data);
         }
     }
 }
