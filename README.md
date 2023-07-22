@@ -7,9 +7,19 @@ http://www.nuget.org/packages/IFTSTAParser/
 The demo solution shows you how to use the parser:
 
 
-```
+```csharp
 string path = "iftsta-file.txt";
-List<IFTSTAConsigment> consigments = IFTSTAParser.Load(path);
+IFTSTADocument document = IFTSTAParser.Load(path);
+
+if (document.CreationDate.HasValue)
+{
+  // process header information
+}
+
+foreach(IFTSTAConsigment consigment in document.Consigments)
+{
+  // process consignment
+}
 ```
 
 which will then deliver you the list  of consigment objects in the original file.
