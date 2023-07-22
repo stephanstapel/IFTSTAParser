@@ -7,7 +7,7 @@ http://www.nuget.org/packages/IFTSTAParser/
 The demo solution shows you how to use the parser:
 
 
-```
+```csharp
 string path = "iftsta-file.txt";
 IFTSTADocument document = IFTSTAParser.Load(path);
 
