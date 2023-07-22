@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <AssemblyVersion>1.2.0.0</AssemblyVersion>
-    <Version>1.2.0</Version>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <Version>2.0.0</Version>
     <Description>Parse EDIFACT IFTSTA files easily with C#</Description>
     <Title>IFTSTA parser for .net</Title>
     <Copyright>Stephan Stapel</Copyright>

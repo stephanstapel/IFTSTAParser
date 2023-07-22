@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+using IFTSTAParser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,20 +27,20 @@ namespace s2industries.IFTSTA
     public class EDISegment
     {
         public string Qualififier { get; private set; }
-        public List<string> DataElements { get; set; }
+        public List<EDIDataElement> DataElements { get; set; }
 
 
-        public EDISegment(string qualifier, List<string> dataElements = null)
+        public EDISegment(string qualifier, List<EDIDataElement> dataElements = null)
         {
             this.Qualififier = qualifier;
             this.DataElements = dataElements;
         }
 
-        public string GetElement(int index, string defaultValue = "")
+        public EDIDataElement GetElement(int index)
         {
             if (index >= this.DataElements.Count)
             {
-                return defaultValue;
+                return null;
             }
             else
             {

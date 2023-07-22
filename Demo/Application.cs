@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+using IFTSTAParser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,10 +29,10 @@ namespace s2industries.IFTSTA.Demo
         internal void run()
         {
             string path = @"..\..\..\sample.txt";
-            List<IFTSTAConsigment> consigments = IFTSTAParser.Load(path);
+            IFTSTADocument doc = IFTSTAParser.Load(path);
 
             string data = System.IO.File.ReadAllText(path);
-            List<IFTSTAConsigment> consigments2 = IFTSTAParser.LoadFromString(data);
+            IFTSTADocument doc2 = IFTSTAParser.LoadFromString(data);
         }
     }
 }
