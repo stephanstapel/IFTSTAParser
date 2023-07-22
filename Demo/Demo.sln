@@ -1,22 +1,34 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Demo", "Demo.csproj", "{73B7EC24-94DE-4D02-B86E-7E55028B9916}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IFTSTAParser", "..\IFTSTAParser\IFTSTAParser.csproj", "{1E03A06E-F39A-4279-993A-980BBA621457}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IFTSTAParser", "..\IFTSTAParser\IFTSTAParser.csproj", "{1E03A06E-F39A-4279-993A-980BBA621457}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{73B7EC24-94DE-4D02-B86E-7E55028B9916}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73B7EC24-94DE-4D02-B86E-7E55028B9916}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73B7EC24-94DE-4D02-B86E-7E55028B9916}.Debug|x86.ActiveCfg = Debug|x86
 		{73B7EC24-94DE-4D02-B86E-7E55028B9916}.Debug|x86.Build.0 = Debug|x86
+		{73B7EC24-94DE-4D02-B86E-7E55028B9916}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73B7EC24-94DE-4D02-B86E-7E55028B9916}.Release|Any CPU.Build.0 = Release|Any CPU
 		{73B7EC24-94DE-4D02-B86E-7E55028B9916}.Release|x86.ActiveCfg = Release|x86
 		{73B7EC24-94DE-4D02-B86E-7E55028B9916}.Release|x86.Build.0 = Release|x86
-		{1E03A06E-F39A-4279-993A-980BBA621457}.Debug|x86.ActiveCfg = Debug|x86
-		{1E03A06E-F39A-4279-993A-980BBA621457}.Debug|x86.Build.0 = Debug|x86
+		{1E03A06E-F39A-4279-993A-980BBA621457}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E03A06E-F39A-4279-993A-980BBA621457}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E03A06E-F39A-4279-993A-980BBA621457}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1E03A06E-F39A-4279-993A-980BBA621457}.Debug|x86.Build.0 = Debug|Any CPU
+		{1E03A06E-F39A-4279-993A-980BBA621457}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E03A06E-F39A-4279-993A-980BBA621457}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1E03A06E-F39A-4279-993A-980BBA621457}.Release|x86.ActiveCfg = Release|x86
 		{1E03A06E-F39A-4279-993A-980BBA621457}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
