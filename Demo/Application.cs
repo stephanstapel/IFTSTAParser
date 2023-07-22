@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-using IFTSTAParser;
+using s2industries.IFTSTA;
 using System;
 using System.Collections.Generic;
 using System.Linq;

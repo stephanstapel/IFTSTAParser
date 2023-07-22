@@ -20,7 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace IFTSTAParser
+namespace s2industries.IFTSTA
 {
     public class EDIDataElement
     {
