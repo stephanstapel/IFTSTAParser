@@ -2,9 +2,20 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1;net461;net480;net8.0</TargetFrameworks>
-    <AssemblyVersion>2.0.1.0</AssemblyVersion>
-    <Version>2.0.1</Version>
-    <Description>Parse EDIFACT IFTSTA files easily with C#</Description>
+    <AssemblyVersion>2.1.0.0</AssemblyVersion>
+    <Version>2.1.0</Version>
+    <Description>Parse EDIFACT IFTSTA files easily with C#
+
+You can use the precompiled C# component via: http://www.nuget.org/packages/IFTSTAParser/
+
+The demo solution shows you how to use the parser:
+
+string path = "iftsta-file.txt";
+List&lt;IFTSTAConsigment&gt; consigments = IFTSTAParser.Load(path);
+
+which will then deliver you the list of consigment objects in the original file.
+
+Please note that I only covered the segments that are absolutely necessary. If you need more fields, I invite you to send pull requests or drop me a message.</Description>
     <Title>IFTSTA parser for .net</Title>
     <Copyright>Stephan Stapel</Copyright>
     <PackageProjectUrl>https://github.com/stephanstapel/IFTSTAParser</PackageProjectUrl>
@@ -13,6 +24,7 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <RootNamespace>s2industries.IFTSTA</RootNamespace>
+    <PackageReleaseNotes>2.1.0: Added more modern targets</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
