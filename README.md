@@ -1,8 +1,20 @@
 # IFTSTAParser
-Parse EDIFACT IFTSTA files easily with C#
+[![NuGet](https://img.shields.io/nuget/v/BMECat.net?color=blue)](https://www.nuget.org/packages/IFTSTAParser/)
+IFTSTAParser  is a .net open source library that allows you to read IFTSTA status information files (tracking files) easily.
 
-You can use the precompiled C# component via:
-http://www.nuget.org/packages/IFTSTAParser/
+# License
+Subject to the Apache license http://www.apache.org/licenses/LICENSE-2.0.html
+
+# Installation
+Just use nuget or Visual Studio Package Manager and download 'BMECat.net'.
+
+You can find more information about the nuget package here:
+
+[![NuGet](https://img.shields.io/nuget/v/BMECat.net?color=blue)](https://www.nuget.org/packages/IFTSTAParser/)
+
+https://www.nuget.org/packages/IFTSTAParser/
+
+# Usage
 
 The demo solution shows you how to use the parser:
 
