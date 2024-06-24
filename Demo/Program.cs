@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace s2industries.IFTSTA.Demo
 {
@@ -28,7 +29,8 @@ namespace s2industries.IFTSTA.Demo
         static void Main(string[] args)
         {
             Application app = new Application();
-            app.run();
+            Task t = app.RunAsync();
+            t.Wait();
         }
     }
 }

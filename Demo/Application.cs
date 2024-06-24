@@ -21,18 +21,19 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace s2industries.IFTSTA.Demo
 {
     class Application
     {
-        internal void run()
+        internal async Task RunAsync()
         {
             string path = @"..\..\..\sample.txt";
-            IFTSTADocument doc = IFTSTAParser.Load(path);
+            IFTSTADocument doc = await IFTSTAParser.LoadAsync(path);
 
             string data = System.IO.File.ReadAllText(path);
-            IFTSTADocument doc2 = IFTSTAParser.LoadFromString(data);
+            IFTSTADocument doc2 = await IFTSTAParser.LoadFromStringAsync(data);
         }
     }
 }

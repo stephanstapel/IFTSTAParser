@@ -22,6 +22,8 @@ using System.Linq;
 using System.Text;
 using System.IO;
 using System.Globalization;
+using System.Threading.Tasks;
+using System.Threading;
 
 
 
@@ -33,22 +35,52 @@ namespace s2industries.IFTSTA
         private const string STANDARD_DATEFORMAT = "yyyyMMddHHmm";
         private const string SHORT_DATEFORMAT = "yyyyMMdd";
 
-        public static IFTSTADocument Load(string path)
+        public static async Task<IFTSTADocument> LoadAsync(string path)
         {
             if (!System.IO.File.Exists(path))
             {
-                throw new Exception(String.Format("File '{0}' does not exist", path));
+                throw new Exception($"File '{path}' does not exist");
             }
 
             StreamReader streamReader = new StreamReader(path);
             string data = streamReader.ReadToEnd();
             streamReader.Close();
 
-            return LoadFromString(data);
+            return await LoadFromStringAsync(data);
+        } // !LoadAsync()
+
+
+        public static IFTSTADocument Load(string path)
+        {
+            Task<IFTSTADocument> t = LoadAsync(path);
+            t.Wait();
+            if (t.IsCompleted)
+            {
+                return t.Result;
+            }
+            else
+            {
+                return null;
+            }
         } // !Load()
 
 
         public static IFTSTADocument LoadFromString(string data)
+        {
+            Task<IFTSTADocument> t = LoadFromStringAsync(data);
+            t.Wait();
+            if (t.IsCompleted)
+            {
+                return t.Result;
+            }
+            else
+            {
+                return null;
+            }
+        } // !LoadFromString()
+
+
+        public static async Task<IFTSTADocument> LoadFromStringAsync(string data)
         {
             // clean data
             data = data.Replace("\r", "").Replace("\n", "");
@@ -62,10 +94,18 @@ namespace s2industries.IFTSTA
             List<IFTSTAConsigment> consigments = new List<IFTSTAConsigment>();
 
             // iterate through segments, find CNI elements and evaluate consecutive segments
-            List<EDISegment> rawSegments = _SplitIntoSegments(data);
-            List<EDISegment> headerSegments = _GetHeaderSegments(rawSegments);
-            List<EDISegment> dataSegments = _GetDataSegments(rawSegments);
-            List<List<EDISegment>> transportStatusSegments = _SplitIntoTransportStatusSegments(rawSegments);
+            List<EDISegment> rawSegments = await _SplitIntoSegmentsAsync(data);
+
+            Task<List<EDISegment>> tHeaderSegments = _GetHeaderSegmentsAsync(rawSegments);            
+            Task<List<EDISegment>> tDataSegments = _GetDataSegmentsAsync(rawSegments);
+            Task<List<List<EDISegment>>> tTransportStatusSegments = _SplitIntoTransportStatusSegmentsAsync(rawSegments);
+
+            Task.WaitAll(tHeaderSegments, tDataSegments, tTransportStatusSegments);
+
+            List<EDISegment> headerSegments = tHeaderSegments.Result;
+            List<EDISegment> dataSegments = tDataSegments.Result;
+            List<List<EDISegment>> transportStatusSegments = tTransportStatusSegments.Result;
+
 
             EDISegment unbSegment = headerSegments.FirstOrDefault(s => s.Qualififier == "UNB");
             DateTime? creationDate = null;
@@ -105,68 +145,68 @@ namespace s2industries.IFTSTA
             }
 
             // analyze data
-            foreach (List<EDISegment> segments in transportStatusSegments)
+            Parallel.ForEach(transportStatusSegments, new ParallelOptions() { MaxDegreeOfParallelism = 4 }, async (segments, ct) =>
             {
                 IFTSTAConsigment consigment = new IFTSTAConsigment();
-                    
-                foreach(EDISegment segment in segments)
+
+                foreach (EDISegment segment in segments)
                 {
                     switch (segment.Qualififier.Trim().ToUpper())
                     {
                         case "CNI": // consigment
-                        {
-                            segment.GetElement(0).GetValue(0); // Serial number differentiating each separate consignment included in the status report.
-                            consigment.No = segment.GetElement(1).GetValue(0); // Consignor's shipment reference number
-                            break;
-                        }
+                            {
+                                segment.GetElement(0).GetValue(0); // Serial number differentiating each separate consignment included in the status report.
+                                consigment.No = segment.GetElement(1).GetValue(0); // Consignor's shipment reference number
+                                break;
+                            }
                         case "GIN": // global identifier
-                        {
-                            consigment.GlobalIdentifier = segment.GetElement(1).GetValue(0);
-                            break;
-                        }
+                            {
+                                consigment.GlobalIdentifier = segment.GetElement(1).GetValue(0);
+                                break;
+                            }
                         case "DTM": // datetime
-                        {
-                            string _dateformat = STANDARD_DATEFORMAT; // qualifier 203 = default
-                            if (segment.GetElement(0).GetValue(2) == "102")
                             {
-                                _dateformat = SHORT_DATEFORMAT;
+                                string _dateformat = STANDARD_DATEFORMAT; // qualifier 203 = default
+                                if (segment.GetElement(0).GetValue(2) == "102")
+                                {
+                                    _dateformat = SHORT_DATEFORMAT;
+                                }
+
+
+                                if (segment.GetElement(0).GetValue(0) == "334")
+                                {
+                                    string s = segment.GetElement(0).GetValue(1);
+
+                                    consigment.StatusChangeDate = DateTime.ParseExact(segment.GetElement(0).GetValue(1),
+                                                                                    _dateformat,
+                                                                                    CultureInfo.InvariantCulture,
+                                                                                    DateTimeStyles.None);
+                                }
+                                break;
                             }
-
-
-                            if (segment.GetElement(0).GetValue(0) == "334")
-                            {
-                                string s = segment.GetElement(0).GetValue(1);
-
-                                consigment.StatusChangeDate = DateTime.ParseExact(segment.GetElement(0).GetValue(1),
-                                                                                _dateformat,
-                                                                                CultureInfo.InvariantCulture,
-                                                                                DateTimeStyles.None);
-                            }
-                            break;
-                        }
                         case "STS": // status
-                        {
-                            if (segment.DataElements.Count == 2)
                             {
-                                consigment.Status = segment.GetElement(1).GetValue(0);
+                                if (segment.DataElements.Count == 2)
+                                {
+                                    consigment.Status = segment.GetElement(1).GetValue(0);
+                                }
+                                break;
                             }
-                            break;
-                        }
                         case "FTX": // free text
-                        {
-                            // join free text into one string
-                            consigment.AdditionalInfo = segment.GetElement(3)?.GetValue(0);
-                            break;
-                        }
+                            {
+                                // join free text into one string
+                                consigment.AdditionalInfo = segment.GetElement(3)?.GetValue(0);
+                                break;
+                            }
                         default:
-                        {
-                            break;
-                        }
+                            {
+                                break;
+                            }
                     }
                 } // !for(i)
 
                 consigments.Add(consigment);
-            } // !foreach(transportStatusSegments)
+            }); // !Parallel.ForEachAsync(transportStatusSegments)
 
             return new IFTSTADocument()
             {
@@ -176,14 +216,14 @@ namespace s2industries.IFTSTA
         } // !LoadFromString()
 
 
-        private static List<EDISegment> _SplitIntoSegments(string rawData)
+        private static async Task<List<EDISegment>> _SplitIntoSegmentsAsync(string rawData)
         {
             List<string> tempElements = rawData.Split(new char[] { '\'' }).ToList();
 
             List<EDISegment> retval = new List<EDISegment>();
             foreach (string element in tempElements)
             {
-                if (element.IndexOf("+") == -1)
+                if (!element.Contains("+"))
                 {
                     continue;
                 }
@@ -203,10 +243,10 @@ namespace s2industries.IFTSTA
             }
 
             return retval;
-        } // !_SplitIntoSegments()
+        } // !_SplitIntoSegmentsAsync()
 
 
-        private static List<EDISegment> _GetHeaderSegments(List<EDISegment> rawSegments)
+        private static async Task<List<EDISegment>> _GetHeaderSegmentsAsync(List<EDISegment> rawSegments)
         {
             List<EDISegment> retval = new List<EDISegment>();
             foreach(EDISegment segment in rawSegments)
@@ -219,10 +259,10 @@ namespace s2industries.IFTSTA
             }
 
             return retval;
-        } // !_GetHeaderSegments()
+        } // !_GetHeaderSegmentsAsync()
 
 
-        private static List<EDISegment> _GetDataSegments(List<EDISegment> rawSegments)
+        private static async Task<List<EDISegment>> _GetDataSegmentsAsync(List<EDISegment> rawSegments)
         {
             List<EDISegment> retval = new List<EDISegment>();
             bool bgmAlreadyFound = false;
@@ -240,10 +280,10 @@ namespace s2industries.IFTSTA
             }
 
             return retval;
-        } // !_GetDataSegments()
+        } // !_GetDataSegmentsAsync()
 
 
-        private static List<List<EDISegment>> _SplitIntoTransportStatusSegments(List<EDISegment> rawSegments)
+        private static async Task<List<List<EDISegment>>> _SplitIntoTransportStatusSegmentsAsync(List<EDISegment> rawSegments)
         {
             List<List<EDISegment>> retval = new List<List<EDISegment>>();
 
@@ -275,6 +315,6 @@ namespace s2industries.IFTSTA
             } // !for(i)
 
             return retval;
-        } // !_SplitIntoTransportStatusSegments()
+        } // !_SplitIntoTransportStatusSegmentsAsync()
     }
 }
